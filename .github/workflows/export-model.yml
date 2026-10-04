@@ -42,8 +42,7 @@ jobs:
           print("Exportado:", path)
           with open("labels.txt", "w", encoding="utf-8") as f:
               for i in range(len(model.names)):
-                  f.write(model.names[i] + "
-")
+                  f.write(model.names[i] + "\n")
           PY
           # La primera pasada auto-instala TensorFlow/onnx2tf y puede fallar al cambiar numpy en caliente;
           # la segunda corre en un proceso limpio con todas las dependencias ya instaladas.
