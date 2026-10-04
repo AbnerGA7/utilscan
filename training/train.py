@@ -44,10 +44,10 @@ def main() -> None:
     parser.add_argument("--version", type=int, default=1)
     parser.add_argument(
         "--weights",
-        default="yolov8s-oiv7.pt",
-        help="Pesos iniciales. yolov8s-oiv7.pt ya conoce Pen/Ruler/Eraser/Scissors..., ideal para fine-tuning",
+        default="yolo11s.pt",
+        help="Pesos iniciales (yolo11s.pt: buen equilibrio precisión/velocidad en móvil)",
     )
-    parser.add_argument("--epochs", type=int, default=100)
+    parser.add_argument("--epochs", type=int, default=40)
     parser.add_argument("--imgsz", type=int, default=640)
     parser.add_argument("--batch", type=int, default=16)
     parser.add_argument("--no-copy", action="store_true", help="No copiar el modelo a los assets de la app")
@@ -66,10 +66,11 @@ def main() -> None:
         epochs=args.epochs,
         imgsz=args.imgsz,
         batch=args.batch,
-        patience=25,
+        patience=10,
+        close_mosaic=5,
         # Aumentaciones útiles para objetos pequeños y alargados (lápices, reglas):
-        degrees=15,
-        flipud=0.2,
+        degrees=10,
+        flipud=0.1,
         mosaic=1.0,
         mixup=0.1,
         project=str(Path(__file__).parent / "runs"),
