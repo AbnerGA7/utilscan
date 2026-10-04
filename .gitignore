@@ -23,3 +23,8 @@ training/datasets/
 
 # Modelos descargados automáticamente por la tarea downloadModels
 app/src/main/assets/models/yolov8s_oiv7*
+
+# Credenciales locales
+*.roboflow_key
+.roboflow_key
+.env
