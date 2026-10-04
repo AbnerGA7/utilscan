@@ -73,24 +73,37 @@ dependencies {
 // a src/main/assets/models si todavía no está. Así el repositorio no guarda binarios pesados.
 // ---------------------------------------------------------------------------------------------
 val modelsDir = layout.projectDirectory.dir("src/main/assets/models")
-val modelReleaseUrl = "https://github.com/AbnerGA7/utilscan/releases/download/model-yolov8s_oiv7"
+val releasesUrl = "https://github.com/AbnerGA7/utilscan/releases/download"
+
+/** (tag del release, archivo, obligatorio) */
+val modelFiles = listOf(
+    Triple("model-school_supplies", "school_supplies.tflite", false),
+    Triple("model-school_supplies", "school_supplies_labels.txt", false),
+    Triple("model-yolov8s_oiv7", "yolov8s_oiv7.tflite", true),
+    Triple("model-yolov8s_oiv7", "yolov8s_oiv7_labels.txt", true),
+)
 
 val downloadModels by tasks.registering {
     group = "utilscan"
-    description = "Descarga el modelo YOLOv8s Open Images V7 en formato .tflite"
-    val files = listOf("yolov8s_oiv7.tflite", "yolov8s_oiv7_labels.txt")
-    outputs.files(files.map { modelsDir.file(it) })
+    description = "Descarga los modelos .tflite publicados en los releases del repositorio"
+    outputs.files(modelFiles.map { modelsDir.file(it.second) })
     doLast {
         modelsDir.asFile.mkdirs()
-        files.forEach { name ->
+        modelFiles.forEach { (tag, name, required) ->
             val target = modelsDir.file(name).asFile
             if (target.exists() && target.length() > 0) return@forEach
             logger.lifecycle("Descargando $name ...")
             val tmp = File(target.parentFile, "$name.part")
-            uri("$modelReleaseUrl/$name").toURL().openStream().use { input ->
-                tmp.outputStream().use { output -> input.copyTo(output) }
+            try {
+                uri("$releasesUrl/$tag/$name").toURL().openStream().use { input ->
+                    tmp.outputStream().use { output -> input.copyTo(output) }
+                }
+                tmp.renameTo(target)
+            } catch (e: java.io.IOException) {
+                tmp.delete()
+                if (required) throw e
+                logger.warn("No se encontró $name (opcional): ${e.message}")
             }
-            tmp.renameTo(target)
         }
     }
 }
