@@ -1,7 +1,7 @@
 name: Exportar modelo YOLO a LiteRT
 
 # Exporta un modelo YOLO de Ultralytics a .tflite (LiteRT) y lo publica como release.
-# La exportación a LiteRT solo funciona en Linux x86/macOS, por eso se hace aquí.
+# Se ejecuta en Linux para tener un entorno reproducible (TensorFlow + onnx2tf).
 on:
   workflow_dispatch:
     inputs:
@@ -27,17 +27,18 @@ jobs:
     steps:
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
       - name: Instalar Ultralytics
-        run: pip install ultralytics
+        # 8.3.x usa el exportador clásico onnx2tf -> TFLite (soporta FP16 y corre en cualquier SO).
+        run: pip install "ultralytics>=8.3,<8.4"
 
       - name: Exportar a LiteRT
         run: |
           python - <<'PY'
           from ultralytics import YOLO
           model = YOLO("${{ inputs.weights }}")
-          path = model.export(format="litert", imgsz=int("${{ inputs.imgsz }}"))
+          path = model.export(format="tflite", imgsz=int("${{ inputs.imgsz }}"), half=True)
           print("Exportado:", path)
           with open("labels.txt", "w", encoding="utf-8") as f:
               for i in range(len(model.names)):
@@ -47,7 +48,8 @@ jobs:
       - name: Preparar archivos
         run: |
           mkdir -p out
-          tflite=$(find . -name "*.tflite" -not -path "./out/*" | head -n 1)
+          tflite=$(find . -name "*_float16.tflite" -not -path "./out/*" | head -n 1)
+          [ -n "$tflite" ] || tflite=$(find . -name "*.tflite" -not -path "./out/*" | head -n 1)
           echo "Modelo: $tflite"
           cp "$tflite" "out/${{ inputs.asset_name }}.tflite"
           cp labels.txt "out/${{ inputs.asset_name }}_labels.txt"
