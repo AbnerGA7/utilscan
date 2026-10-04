@@ -33,17 +33,21 @@ jobs:
         # 8.3.x usa el exportador clásico onnx2tf -> TFLite (soporta FP16 y corre en cualquier SO).
         run: pip install "ultralytics>=8.3,<8.4"
 
-      - name: Exportar a LiteRT
+      - name: Exportar a TFLite
         run: |
-          python - <<'PY'
+          cat > export.py <<'PY'
           from ultralytics import YOLO
           model = YOLO("${{ inputs.weights }}")
           path = model.export(format="tflite", imgsz=int("${{ inputs.imgsz }}"), half=True)
           print("Exportado:", path)
           with open("labels.txt", "w", encoding="utf-8") as f:
               for i in range(len(model.names)):
-                  f.write(model.names[i] + "\n")
+                  f.write(model.names[i] + "
+")
           PY
+          # La primera pasada auto-instala TensorFlow/onnx2tf y puede fallar al cambiar numpy en caliente;
+          # la segunda corre en un proceso limpio con todas las dependencias ya instaladas.
+          python export.py || python export.py
 
       - name: Preparar archivos
         run: |
