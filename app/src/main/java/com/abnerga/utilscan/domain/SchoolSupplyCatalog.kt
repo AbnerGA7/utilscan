@@ -36,15 +36,17 @@ object SchoolSupplyCatalog {
         add("✉️", "Sobre", "envelope")
         add("📂", "Folder", "folder", "file folder")
         add("👝", "Cartuchera", "pencil case")
-        add("🎒", "Mochila", "backpack", "school bag", "bag")
+        add("🎒", "Mochila", "backpack", "school bag")
         add("🧮", "Calculadora", "calculator")
         add("💻", "Laptop", "laptop")
         add("📱", "Celular", "mobile phone", "cell phone", "smartphone")
         add("📲", "Tablet", "tablet computer", "tablet")
         add("⌨️", "Teclado", "computer keyboard", "keyboard")
-        add("🖱️", "Mouse", "computer mouse", "mouse")
+        // Ojo: en Open Images "Mouse" es el animal, por eso solo se mapea "computer mouse".
+        add("🖱️", "Mouse", "computer mouse")
         add("🧴", "Tomatodo", "bottle", "water bottle")
-        add("🕰️", "Reloj", "clock", "watch", "alarm clock")
+        add("🕰️", "Reloj", "clock", "watch", "alarm clock", "wall clock", "digital clock")
+        add("🔪", "Guillotina", "paper cutter")
         add("🖼️", "Pizarra", "whiteboard", "blackboard")
     }
 
