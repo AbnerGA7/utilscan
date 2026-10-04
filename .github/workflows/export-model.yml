@@ -1,0 +1,69 @@
+name: Exportar modelo YOLO a LiteRT
+
+# Exporta un modelo YOLO de Ultralytics a .tflite (LiteRT) y lo publica como release.
+# La exportación a LiteRT solo funciona en Linux x86/macOS, por eso se hace aquí.
+on:
+  workflow_dispatch:
+    inputs:
+      weights:
+        description: "Pesos de Ultralytics (p. ej. yolov8s-oiv7.pt, yolov8m-oiv7.pt)"
+        required: true
+        default: "yolov8s-oiv7.pt"
+      imgsz:
+        description: "Tamaño de entrada"
+        required: true
+        default: "640"
+      asset_name:
+        description: "Nombre base del archivo en la app"
+        required: true
+        default: "yolov8s_oiv7"
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Ultralytics
+        run: pip install ultralytics
+
+      - name: Exportar a LiteRT
+        run: |
+          python - <<'PY'
+          from ultralytics import YOLO
+          model = YOLO("${{ inputs.weights }}")
+          path = model.export(format="litert", imgsz=int("${{ inputs.imgsz }}"))
+          print("Exportado:", path)
+          with open("labels.txt", "w", encoding="utf-8") as f:
+              for i in range(len(model.names)):
+                  f.write(model.names[i] + "\n")
+          PY
+
+      - name: Preparar archivos
+        run: |
+          mkdir -p out
+          tflite=$(find . -name "*.tflite" -not -path "./out/*" | head -n 1)
+          echo "Modelo: $tflite"
+          cp "$tflite" "out/${{ inputs.asset_name }}.tflite"
+          cp labels.txt "out/${{ inputs.asset_name }}_labels.txt"
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.asset_name }}
+          path: out/
+
+      - name: Publicar release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="model-${{ inputs.asset_name }}"
+          gh release delete "$tag" --yes --cleanup-tag -R "${{ github.repository }}" || true
+          gh release create "$tag" out/* -R "${{ github.repository }}" \
+            --title "Modelo ${{ inputs.asset_name }}" \
+            --notes "Exportado desde ${{ inputs.weights }} con imgsz=${{ inputs.imgsz }}."
