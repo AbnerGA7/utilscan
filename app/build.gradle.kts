@@ -67,3 +67,32 @@ dependencies {
 
     testImplementation(libs.junit)
 }
+
+// ---------------------------------------------------------------------------------------------
+// Descarga el modelo pre-entrenado (publicado como release por .github/workflows/export-model.yml)
+// a src/main/assets/models si todavía no está. Así el repositorio no guarda binarios pesados.
+// ---------------------------------------------------------------------------------------------
+val modelsDir = layout.projectDirectory.dir("src/main/assets/models")
+val modelReleaseUrl = "https://github.com/AbnerGA7/utilscan/releases/download/model-yolov8s_oiv7"
+
+val downloadModels by tasks.registering {
+    group = "utilscan"
+    description = "Descarga el modelo YOLOv8s Open Images V7 en formato .tflite"
+    val files = listOf("yolov8s_oiv7.tflite", "yolov8s_oiv7_labels.txt")
+    outputs.files(files.map { modelsDir.file(it) })
+    doLast {
+        modelsDir.asFile.mkdirs()
+        files.forEach { name ->
+            val target = modelsDir.file(name).asFile
+            if (target.exists() && target.length() > 0) return@forEach
+            logger.lifecycle("Descargando $name ...")
+            val tmp = File(target.parentFile, "$name.part")
+            uri("$modelReleaseUrl/$name").toURL().openStream().use { input ->
+                tmp.outputStream().use { output -> input.copyTo(output) }
+            }
+            tmp.renameTo(target)
+        }
+    }
+}
+
+tasks.named("preBuild") { dependsOn(downloadModels) }
