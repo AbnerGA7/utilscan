@@ -28,4 +28,14 @@ class SchoolSupplyCatalogTest {
         assertEquals(setOf(1, 3), SchoolSupplyCatalog.schoolClassIndices(labels))
         assertTrue(SchoolSupplyCatalog.displayName("Scissors").endsWith("Tijeras"))
     }
+
+    @Test
+    fun `todas las clases del modelo entrenado tienen traduccion`() {
+        // Debe coincidir con CLASSES en training/merge_datasets.py
+        val trained = listOf(
+            "pencil", "pen", "eraser", "ruler", "sharpener", "scissors",
+            "glue", "book", "notebook", "compass", "cell phone",
+        )
+        trained.forEach { assertTrue("Falta traducción para '$it'", SchoolSupplyCatalog.isSchoolSupply(it)) }
+    }
 }
