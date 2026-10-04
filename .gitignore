@@ -20,3 +20,6 @@ __pycache__/
 training/runs/
 training/datasets/
 *.pt
+
+# Modelos descargados automáticamente por la tarea downloadModels
+app/src/main/assets/models/yolov8s_oiv7*
