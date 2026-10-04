@@ -1,0 +1,22 @@
+# Gradle / Android Studio
+.gradle/
+build/
+/local.properties
+/.idea/
+*.iml
+.DS_Store
+/captures
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.keystore
+!debug.keystore
+
+# Python / training
+__pycache__/
+*.pyc
+.venv/
+training/runs/
+training/datasets/
+*.pt
