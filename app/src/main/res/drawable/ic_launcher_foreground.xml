@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lápiz dentro de un marco de detección -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Esquinas del recuadro de detección -->
+    <path
+        android:strokeColor="#FF4ADE80"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M30,40 L30,30 L40,30 M68,30 L78,30 L78,40 M78,68 L78,78 L68,78 M40,78 L30,78 L30,68" />
+    <!-- Cuerpo del lápiz -->
+    <path
+        android:fillColor="#FFFACC15"
+        android:pathData="M64,36 L72,44 L50,66 L42,58 Z" />
+    <!-- Goma -->
+    <path
+        android:fillColor="#FFF472B6"
+        android:pathData="M64,36 L68,32 L76,40 L72,44 Z" />
+    <!-- Punta -->
+    <path
+        android:fillColor="#FFF5D0A9"
+        android:pathData="M42,58 L50,66 L38,70 Z" />
+    <path
+        android:fillColor="#FF1F2937"
+        android:pathData="M40.5,64.5 L43.5,67.5 L38,70 Z" />
+</vector>
