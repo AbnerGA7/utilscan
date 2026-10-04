@@ -24,24 +24,43 @@ Kotlin · Jetpack Compose · CameraX · LiteRT (TensorFlow Lite) · YOLOv8
 
 ## 🧠 El modelo
 
-| | |
+UtilScan trae **dos modelos** y usa por defecto el afinado (se cambian en *Ajustes → Modelo*):
+
+| | Útiles escolares (por defecto) | Open Images V7 (respaldo) |
+|---|---|---|
+| **Arquitectura** | YOLO11s afinado | YOLOv8s pre-entrenado |
+| **Datos** | 3.966 fotos de 8 datasets de Roboflow ([detalle](training/README.md)) | Open Images V7 (601 clases) |
+| **Clases** | lápiz, lapicero, borrador, regla, tajador, tijeras, goma, libro, cuaderno, compás, celular | 601, filtradas a ~20 útiles |
+| **Formato** | `.tflite` FP16, 640×640, ~19 MB | `.tflite` FP16, 640×640, ~22 MB |
+
+### Resultados del modelo afinado (split de test, 288 imágenes nunca vistas)
+
+| Métrica | Valor |
 |---|---|
-| **Arquitectura** | YOLOv8s (Ultralytics) |
-| **Pre-entrenamiento** | [Open Images V7](https://storage.googleapis.com/openimages/web/index.html): 601 clases, ~1.7 M imágenes |
-| **Formato** | `.tflite` FP16, entrada 640×640 |
-| **Útiles que reconoce sin entrenar** | lapicero, borrador, regla, tajador, cartuchera, tijeras, engrapador, calculadora, libro, mochila, cinta adhesiva, sobre, pizarra, laptop, celular, tablet, teclado, mouse, tomatodo, reloj |
+| **mAP50** | **0,802** |
+| mAP50-95 | 0,632 |
+| Precisión | 0,811 |
+| Recall | 0,738 |
 
-¿Por qué este modelo? Los modelos "típicos" de móvil (COCO, EfficientDet-Lite, MobileNet-SSD) **no conocen**
-lápices, reglas ni borradores. Open Images V7 sí, así que la app funciona bien desde el primer momento.
-Para más precisión (o clases extra como compás, escuadra o plumón) puedes **afinarlo en ~30 min gratis en Colab**:
-mira [`training/`](training/README.md).
+| Clase | AP50 | | Clase | AP50 |
+|---|---|---|---|---|
+| ✂️ Tijeras | 0,995 | | 🔪 Tajador | 0,764 |
+| 🧭 Compás | 0,995 | | 📕 Libro | 0,747 |
+| 📱 Celular | 0,993 | | 📓 Cuaderno | 0,632 |
+| 🧴 Goma | 0,978 | | 🧽 Borrador | 0,580 |
+| 📏 Regla | 0,922 | | ✏️ Lápiz | 0,409 |
+| 🖊️ Lapicero | 0,808 | | | |
 
-La app prioriza automáticamente un modelo afinado (`school_supplies.tflite`) si existe.
+> El lápiz es la clase más difícil (delgado y fácil de confundir con el lapicero). Agregar fotos propias
+> de lápices es la forma más rápida de mejorarla: ver [`training/`](training/README.md).
+
+¿Por qué no un modelo genérico? Los modelos típicos de móvil (COCO, EfficientDet-Lite, MobileNet-SSD) **no conocen**
+lápices, reglas ni borradores. Por eso UtilScan se entrenó con datos específicos de útiles escolares.
 
 ## 🚀 Cómo correrlo
 
 1. Clona el repo y ábrelo en **Android Studio** (Ladybug o superior).
-2. Dale ▶️ Run. La tarea de Gradle `downloadModels` baja el modelo (~22 MB) desde los
+2. Dale ▶️ Run. La tarea de Gradle `downloadModels` baja los modelos (~40 MB) desde los
    [Releases](https://github.com/AbnerGA7/utilscan/releases) la primera vez.
 3. Acepta el permiso de cámara y apunta a tus útiles.
 
