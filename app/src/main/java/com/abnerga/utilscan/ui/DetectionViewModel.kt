@@ -20,7 +20,7 @@ data class DetectionUiState(
     val selectedModel: ModelSpec? = null,
     val requestedAccelerator: Accelerator = Accelerator.CPU,
     val activeAccelerator: Accelerator? = null,
-    val scoreThreshold: Float = 0.35f,
+    val scoreThreshold: Float = 0.25f,
     val onlySchoolSupplies: Boolean = true,
     val result: FrameResult? = null,
     val fps: Float = 0f,
