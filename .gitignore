@@ -22,7 +22,8 @@ training/datasets/
 *.pt
 
 # Modelos descargados automáticamente por la tarea downloadModels
-app/src/main/assets/models/yolov8s_oiv7*
+app/src/main/assets/models/*.tflite
+app/src/main/assets/models/*_labels.txt
 
 # Credenciales locales
 *.roboflow_key
