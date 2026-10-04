@@ -69,6 +69,6 @@ jobs:
         run: |
           tag="model-${{ inputs.asset_name }}"
           gh release delete "$tag" --yes --cleanup-tag -R "${{ github.repository }}" || true
-          gh release create "$tag" out/* -R "${{ github.repository }}" \
+          gh release create "$tag" out/* -R "${{ github.repository }}" --latest=false \
             --title "Modelo ${{ inputs.asset_name }}" \
             --notes "Exportado desde ${{ inputs.weights }} con imgsz=${{ inputs.imgsz }}."
