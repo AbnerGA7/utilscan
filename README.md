@@ -10,6 +10,10 @@ Kotlin · Jetpack Compose · CameraX · LiteRT (TensorFlow Lite) · YOLOv8
 ![minSdk](https://img.shields.io/badge/minSdk-24-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
+<img src="docs/cover.webp" alt="UtilScan detectando útiles escolares" width="820">
+
+### [⬇️ Descargar APK](https://github.com/AbnerGA7/utilscan/releases/latest/download/utilscan.apk)
+
 </div>
 
 ---
