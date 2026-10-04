@@ -20,28 +20,33 @@ goma en barra…), afina el modelo con un dataset de útiles escolares.
 
 ```bash
 pip install -r training/requirements.txt
-python training/train.py --roboflow-key TU_API_KEY \
-    --workspace hunaynzm --project stationary-items-detection --version 1
+echo TU_API_KEY > ~/.roboflow_key            # o exporta ROBOFLOW_API_KEY
+python training/merge_datasets.py            # descarga y fusiona los datasets
+python training/train.py --data training/datasets/school_supplies/data.yaml
 ```
 
-El script entrena, valida, exporta a TFLite FP16 y copia el modelo a los assets de la app.
+El script entrena YOLO11s, valida, exporta a TFLite FP16 y copia el modelo a los assets de la app.
 
-## Datasets recomendados (Roboflow Universe)
+## Dataset fusionado
 
-| Dataset | Imágenes | Clases |
+`merge_datasets.py` combina estos datasets de [Roboflow Universe](https://universe.roboflow.com) (todos CC BY 4.0)
+y unifica sus etiquetas en 11 clases: `pencil, pen, eraser, ruler, sharpener, scissors, glue, book, notebook, compass, cell phone`.
+
+| Dataset | Imágenes | Aporta |
 |---|---|---|
-| [Stationary Items Detection](https://universe.roboflow.com/hunaynzm/stationary-items-detection) | 99 | libro, tijeras, lápiz, lapicero, compás, borrador, escuadra, regla, tajador… |
-| [Stationary Item Detector](https://universe.roboflow.com/search?q=class%3Apencil+and+ruler) | ~500 | plumón, lapicero, lápiz, tijeras, engrapador, cinta, borrador, goma, regla, tajador |
-| [Stationery (PembelajaranMesin)](https://universe.roboflow.com/pembelajaranmesin-38zuw/stationery-qzl8u) | 100 | libro, regla, borrador, lápiz, tajador |
-| [Pen Pencil Eraser](https://universe.roboflow.com/pen-pencil-easer/pen-pencil-eraser-sgsuv) | 151 | lapicero, lápiz, borrador |
+| [Stationary Items Dataset](https://universe.roboflow.com/national-university-fast/stationary-items-dataset) | 1162 | lápiz, lapicero, borrador, regla, tajador, libro, cuaderno |
+| [Online Edu Helper](https://universe.roboflow.com/omocomo-naver-com/online-edu-helper-dataset) | 3489 | lapicero, regla, tijeras, goma, celular, libro |
+| [Stationary Items Detection](https://universe.roboflow.com/hunaynzm/stationary-items-detection) | 99 | compás, tijeras, tajador, lápiz… |
+| [Stationery (PembelajaranMesin)](https://universe.roboflow.com/pembelajaranmesin-38zuw/stationery-qzl8u) | 100 | regla, borrador, lápiz, tajador, libro |
+| [Pen Pencil Eraser](https://universe.roboflow.com/pen-pencil-easer/pen-pencil-eraser-sgsuv) | 63 | lapicero, lápiz, borrador |
+| [DeepLearning_Assignment2](https://universe.roboflow.com/stationary-items/deeplearning_assignment2) | 41 | tajador, regla, lápiz, borrador |
+| [Stationery (A1)](https://universe.roboflow.com/a1-6zprn/stationery-klnb6) | 50 | cuaderno, lapicero, lápiz, borrador, regla |
+| [Stationery (Kimanurak)](https://universe.roboflow.com/kimanurak/stationery-vxciz) | 144 | lapicero, lápiz, borrador |
+
+Resultado: **3966 imágenes** (3187 train / 491 val / 288 test) y ~5.800 cajas.
 
 > 💡 **Tip para mejor precisión:** combina 2-3 datasets en Roboflow (*Merge*), y agrega 50-100 fotos
 > **tuyas** tomadas con el celular, en tu escritorio y con tu iluminación. Eso mejora más que cualquier otro cambio.
-
-## ¿Por qué partir de `yolov8s-oiv7.pt`?
-
-Esos pesos ya aprendieron qué es un *Pen*, un *Ruler* o un *Eraser* con millones de imágenes de Open Images.
-Al afinarlos, el modelo converge más rápido y generaliza mejor que partiendo de COCO (que no tiene útiles).
 
 ## Exportar otro modelo pre-entrenado
 
